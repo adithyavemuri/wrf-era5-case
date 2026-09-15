@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wrf-era5-case"
+version = "0.1.0"
+description = "Prepare transparent, reproducible ERA5-driven WRF cases"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Adithya Vemuri" }]
+dependencies = [
+  "cdsapi>=0.7.7",
+  "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.scripts]
+wrf-era5-case = "wrf_era5_case.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+wrf_era5_case = ["templates/**/*.template", "templates/**/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using this metadata."
+title: "WRF ERA5 Case"
+type: software
+authors:
+  - family-names: "Vemuri"
+    given-names: "Adithya"
+version: 0.1.0
+date-released: 2026-09-15
+license: MIT
+repository-code: "https://github.com/adithyavemuri/wrf-era5-case"
