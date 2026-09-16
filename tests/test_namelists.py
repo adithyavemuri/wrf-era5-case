@@ -37,9 +37,14 @@ def test_generates_readable_synchronized_namelists(tmp_path):
     assert len(manifest["inputs"]["era5_requests"]) == 2
 
 
-def test_refuses_to_overwrite_generated_case(tmp_path):
+def test_reuses_matching_case_and_protects_human_edits(tmp_path):
     config = load_config(write_config(tmp_path))
+    first = configure_case(config, build_requests(config))
+    created = json.loads(first["manifest"].read_text())["created_utc"]
     configure_case(config, build_requests(config))
-    with pytest.raises(RuntimeError, match="without --force"):
+    assert json.loads(first["manifest"].read_text())["created_utc"] == created
+    first["namelist_input"].write_text(first["namelist_input"].read_text() + "! user edit\n")
+    with pytest.raises(RuntimeError, match="prepare --force-config"):
         configure_case(config, build_requests(config))
     configure_case(config, build_requests(config), force=True)
+    assert "user edit" not in first["namelist_input"].read_text()

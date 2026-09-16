@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import shutil
 from datetime import datetime, timezone
 from importlib.resources import files
 from pathlib import Path
@@ -37,15 +36,8 @@ def _duration_values(config: CaseConfig) -> tuple[int, int, int, int]:
     return days, hours, minutes, seconds
 
 
-def _write(path: Path, content: str, force: bool) -> None:
-    if path.exists() and not force:
-        raise RuntimeError(f"refusing to replace existing file without --force: {path}")
-    path.write_text(content)
-
-
-def configure_case(config: CaseConfig, requests: list[Era5Request], *, force: bool = False) -> dict[str, Path]:
+def _case_contents(config: CaseConfig, requests: list[Era5Request]) -> tuple[dict[str, Path], dict[Path, str]]:
     destination = config.case_directory
-    destination.mkdir(parents=True, exist_ok=True)
     geog_root = find_geodata_root(config.geography_directory) or config.geography_directory
     shared = {
         "START_DATE": _wps_date(config.start),
@@ -92,27 +84,11 @@ def configure_case(config: CaseConfig, requests: list[Era5Request], *, force: bo
     profile_copy = destination / "PHYSICS_PROFILE.md"
     manifest_path = destination / "case-manifest.json"
     instructions_path = destination / "WPS_STEPS.md"
-    planned = [wps_path, wps_pressure_path, wps_surface_path, wrf_path, profile_copy, instructions_path, manifest_path]
-    if config.source != config_copy:
-        planned.append(config_copy)
-    existing = [path for path in planned if path.exists()]
-    if existing and not force:
-        names = ", ".join(str(path) for path in existing)
-        raise RuntimeError(f"refusing to replace existing files without --force: {names}")
     pressure_wps = _render("namelist.wps.template", shared)
     surface_values = dict(shared)
     surface_values["UNGRIB_PREFIX"] = "SFC"
     surface_wps = _render("namelist.wps.template", surface_values)
-    _write(wps_path, pressure_wps, force)
-    _write(wps_pressure_path, pressure_wps, force)
-    _write(wps_surface_path, surface_wps, force)
-    _write(wrf_path, _render("namelist.input.template", wrf_values), force)
-    if config.source != config_copy:
-        if config_copy.exists() and not force:
-            raise RuntimeError(f"refusing to replace existing file without --force: {config_copy}")
-        shutil.copy2(config.source, config_copy)
     profile_text = files("wrf_era5_case").joinpath("templates", "demonstration", "README.md").read_text()
-    _write(profile_copy, profile_text, force)
     instructions = f"""# WPS handoff for {config.name}
 
 This package prepares the case but does not run WPS in version 0.1.
@@ -127,8 +103,6 @@ This package prepares the case but does not run WPS in version 0.1.
 
 The ERA-interim pressure-level Vtable is used as the initial WPS 4.6 compatibility path because it contains the ECMWF pressure and surface parameter mappings. This handoff still requires an end-to-end ERA5/WPS acceptance test.
 """
-    _write(instructions_path, instructions, force)
-
     manifest = {
         "schema_version": 1,
         "created_utc": datetime.now(timezone.utc).isoformat(),
@@ -157,8 +131,7 @@ The ERA-interim pressure-level Vtable is used as the initial WPS 4.6 compatibili
             "Generated namelists have not yet been validated by WPS or real.exe.",
         ],
     }
-    _write(manifest_path, json.dumps(manifest, indent=2, sort_keys=True) + "\n", force)
-    return {
+    paths = {
         "namelist_wps": wps_path,
         "namelist_wps_pressure": wps_pressure_path,
         "namelist_wps_surface": wps_surface_path,
@@ -168,3 +141,68 @@ The ERA-interim pressure-level Vtable is used as the initial WPS 4.6 compatibili
         "wps_steps": instructions_path,
         "manifest": manifest_path,
     }
+    contents = {
+        wps_path: pressure_wps,
+        wps_pressure_path: pressure_wps,
+        wps_surface_path: surface_wps,
+        wrf_path: _render("namelist.input.template", wrf_values),
+        profile_copy: profile_text,
+        instructions_path: instructions,
+        manifest_path: json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+    }
+    if config.source != config_copy:
+        contents[config_copy] = config.source.read_text()
+    return paths, contents
+
+
+def _manifest_equivalent(existing: str, desired: str) -> bool:
+    try:
+        existing_data = json.loads(existing)
+        desired_data = json.loads(desired)
+    except json.JSONDecodeError:
+        return False
+    existing_data.pop("created_utc", None)
+    desired_data.pop("created_utc", None)
+    return existing_data == desired_data
+
+
+def configuration_conflicts(config: CaseConfig, requests: list[Era5Request]) -> list[Path]:
+    paths, contents = _case_contents(config, requests)
+    manifest_path = paths["manifest"]
+    conflicts: list[Path] = []
+    for path, desired in contents.items():
+        if not path.exists():
+            continue
+        existing = path.read_text()
+        equivalent = _manifest_equivalent(existing, desired) if path == manifest_path else existing == desired
+        if not equivalent:
+            conflicts.append(path)
+    return conflicts
+
+
+def require_writable_configuration(
+    config: CaseConfig, requests: list[Era5Request], *, force: bool = False
+) -> None:
+    conflicts = configuration_conflicts(config, requests)
+    if conflicts and not force:
+        names = ", ".join(str(path) for path in conflicts)
+        raise RuntimeError(
+            "generated case files differ from the requested configuration: "
+            f"{names}. Review them, then use 'configure --force' or 'prepare --force-config' "
+            "to replace only generated case configuration files"
+        )
+
+
+def configure_case(config: CaseConfig, requests: list[Era5Request], *, force: bool = False) -> dict[str, Path]:
+    config.case_directory.mkdir(parents=True, exist_ok=True)
+    paths, contents = _case_contents(config, requests)
+    require_writable_configuration(config, requests, force=force)
+    manifest_path = paths["manifest"]
+    for path, desired in contents.items():
+        if path.exists() and not force:
+            existing = path.read_text()
+            equivalent = _manifest_equivalent(existing, desired) if path == manifest_path else existing == desired
+            if equivalent:
+                continue
+        path.write_text(desired)
+    return paths

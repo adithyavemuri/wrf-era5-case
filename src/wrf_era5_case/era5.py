@@ -122,6 +122,21 @@ def download_requests(
     force: bool = False,
     client_factory: Callable[[], Any] | None = None,
 ) -> tuple[list[Path], list[Path]]:
+    pending: list[Era5Request] = []
+    reused: list[Path] = []
+    for item in requests:
+        if is_grib(item.target) and not force:
+            reused.append(item.target)
+            continue
+        if item.target.exists() and not force:
+            raise RuntimeError(f"existing file is not a recognizable GRIB file: {item.target}")
+        pending.append(item)
+
+    # cdsapi.Client may contact CDS while it initializes. Do not construct it
+    # when every requested file can be reused locally.
+    if not pending:
+        return [], reused
+
     if client_factory is None:
         try:
             import cdsapi
@@ -131,14 +146,8 @@ def download_requests(
 
     client = client_factory()
     downloaded: list[Path] = []
-    reused: list[Path] = []
-    for item in requests:
+    for item in pending:
         item.target.parent.mkdir(parents=True, exist_ok=True)
-        if is_grib(item.target) and not force:
-            reused.append(item.target)
-            continue
-        if item.target.exists() and not force:
-            raise RuntimeError(f"existing file is not a recognizable GRIB file: {item.target}")
         temporary = item.target.with_suffix(item.target.suffix + ".part")
         if temporary.exists():
             temporary.unlink()

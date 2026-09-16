@@ -10,7 +10,7 @@ from .config import CaseConfig, ConfigurationError, load_config
 from .domain import era5_area
 from .era5 import build_requests, download_requests, is_grib, requested_times, write_request_files
 from .geodata import GEODATA_COMPRESSED_BYTES, GEODATA_URLS, download_geodata, geodata_status
-from .namelists import configure_case
+from .namelists import configure_case, require_writable_configuration
 from .validation import checks_pass, run_checks
 
 
@@ -32,8 +32,17 @@ def _parser() -> argparse.ArgumentParser:
     ):
         command = commands.add_parser(name, help=help_text)
         command.add_argument("config", type=Path)
-        if name in {"download-era5", "configure", "prepare"}:
+        if name in {"download-era5", "configure"}:
             command.add_argument("--force", action="store_true", help="Explicitly replace this command's existing outputs")
+        if name == "prepare":
+            command.add_argument(
+                "--force-config", action="store_true",
+                help="Replace conflicting generated namelists and case metadata, but never ERA5 data",
+            )
+            command.add_argument(
+                "--force-era5", action="store_true",
+                help="Redownload ERA5 files even when recognizable files already exist",
+            )
 
     geodata = commands.add_parser("geodata", help="Inspect or download shared mandatory WPS geographical data")
     geodata_commands = geodata.add_subparsers(dest="geodata_command", required=True)
@@ -131,12 +140,13 @@ def _run(arguments: argparse.Namespace) -> int:
         print(f"      {root}")
         print("[2/4] Writing reproducible ERA5 request files")
         requests = build_requests(config)
+        require_writable_configuration(config, requests, force=arguments.force_config)
         write_request_files(config, requests)
         print("[3/4] Downloading or reusing ERA5 GRIB files")
-        downloaded, reused = download_requests(requests, force=arguments.force)
+        downloaded, reused = download_requests(requests, force=arguments.force_era5)
         print(f"      {len(downloaded)} downloaded, {len(reused)} reused")
         print("[4/4] Generating readable case configuration")
-        configure_case(config, requests, force=arguments.force)
+        configure_case(config, requests, force=arguments.force_config)
         print(f"Case prepared: {config.case_directory}")
         print("Next: inspect the namelists, then validate this case with WPS and real.exe.")
         return 0

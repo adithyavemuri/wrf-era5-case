@@ -9,3 +9,8 @@
 - Add cached official WPS mandatory geodata downloads.
 - Generate synchronized WPS/WRF namelists, physics notes and provenance.
 - Add an offline test suite and GitHub Actions checks.
+- Reuse matching generated case files and detect configuration conflicts before
+  starting an ERA5 download.
+- Separate configuration replacement from explicit ERA5 redownloads.
+- Avoid initializing the CDS network client when every requested GRIB file is
+  already available locally.

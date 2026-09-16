@@ -29,11 +29,14 @@ def test_download_is_atomic_and_reusable(tmp_path):
             with open(target, "wb") as handle:
                 handle.write(b"GRIB" + b"0" * 20)
 
+    def must_not_connect():
+        raise AssertionError("client factory should not run when all GRIB files are reusable")
+
     downloaded, reused = download_requests(requests, client_factory=Client)
     assert len(downloaded) == 2
     assert not reused
     assert all(is_grib(path) for path in downloaded)
-    downloaded, reused = download_requests(requests, client_factory=Client)
+    downloaded, reused = download_requests(requests, client_factory=must_not_connect)
     assert not downloaded
     assert len(reused) == 2
     assert not list(config.era5_directory.glob("*.part"))

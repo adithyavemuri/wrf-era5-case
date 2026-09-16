@@ -67,7 +67,10 @@ wrf-era5-case configure my-case.toml
 ```
 
 Existing recognizable GRIB files and installed geodata are reused. Existing
-generated namelists are not overwritten unless `--force` is explicitly used.
+generated files are reused when they match. Human-edited or stale case files
+are not overwritten unless `configure --force` or `prepare --force-config` is
+explicitly used. Forcing configuration never redownloads ERA5; that requires
+the separate `prepare --force-era5` option.
 The standalone `configure` command requires the configured geodata to be
 installed so it can write the exact extracted `geog_data_path`.
 
