@@ -29,6 +29,7 @@ def test_generates_readable_synchronized_namelists(tmp_path):
     assert "prefix = 'PRES'" in wps
     assert "prefix = 'SFC'" in surface_wps
     assert "geog_data_res     = 'lowres'" in wps
+    assert "adjust_output_times                 = .true." in (config.case_directory / "namelist.input").read_text()
     assert "run_hours                           = 6" in wrf
     assert "num_metgrid_levels                  = 38" in wrf
     assert "bl_pbl_physics                      = 1" in wrf

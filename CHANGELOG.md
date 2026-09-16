@@ -19,3 +19,5 @@
 - Validate the Netherlands demonstration case with downloaded ERA5 data through
   WPS 4.6.0 and WRF 4.7.1 `real.exe`.
 - Make the ERA5-reanalysis-only scope explicit and reject other forcing modes.
+- Align future history files to requested output times with WRF's
+  `adjust_output_times` option.

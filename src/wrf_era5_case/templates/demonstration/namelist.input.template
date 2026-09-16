@@ -14,6 +14,7 @@
  interval_seconds                    = @INTERVAL_SECONDS@,
  input_from_file                     = .true.,
  history_interval                    = @HISTORY_INTERVAL@,
+ adjust_output_times                 = .true.,
  frames_per_outfile                  = 1,
  restart                             = .false.,
  io_form_history                     = 2,
