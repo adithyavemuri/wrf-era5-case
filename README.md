@@ -105,6 +105,10 @@ submitting a large CDS request.
 See [CAPABILITIES_AND_LIMITATIONS.md](docs/CAPABILITIES_AND_LIMITATIONS.md) for
 the precise version 0.1 boundary.
 
+The included Netherlands example has also been exercised end to end through
+WPS and `real.exe`. See [VALIDATION.md](docs/VALIDATION.md) for the exact test
+case, software versions, outputs and remaining boundary.
+
 ## Tests
 
 ```bash

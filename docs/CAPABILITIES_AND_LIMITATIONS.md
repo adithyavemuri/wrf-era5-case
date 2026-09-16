@@ -27,11 +27,15 @@
 
 - The ERA5 bounding rectangle is a conservative spherical estimate. It is not
   calculated from exact projected WRF corner coordinates.
-- GRIB validation initially checks the GRIB signature and file size. Full
-  variable/time/level validation requires WPS or a GRIB decoder and is a later
-  milestone.
-- The default metgrid-level count assumes the selected pressure levels plus a
-  surface level. It must be confirmed against the actual `met_em` output.
-- The ERA5 variable list and WPS Vtable path must pass the planned real WPS
-  acceptance test before the package is declared production-ready.
+- Built-in GRIB validation checks the GRIB signature and file size. The tested
+  Netherlands case received the intended variables, hours and pressure levels,
+  as independently inspected with the WPS GRIB reader; arbitrary future
+  downloads are not yet decoded and checked field by field by this package.
+- The default metgrid-level count assumes the selected 37 pressure levels plus
+  a surface level. This was confirmed for the tested Netherlands case but is
+  not dynamically inferred from arbitrary input files.
+- The current ERA5 variable list and ERA-Interim-compatible WPS Vtable passed
+  the documented WPS 4.6.0 and WRF 4.7.1 `real.exe` acceptance test. This is a
+  technical workflow validation, not proof that the demonstration setup is
+  scientifically suitable for a study.
 - The official high-resolution WPS geodata package needs substantial storage.

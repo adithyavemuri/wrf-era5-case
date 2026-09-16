@@ -53,6 +53,7 @@ def _case_contents(config: CaseConfig, requests: list[Era5Request]) -> tuple[dic
         "TRUELAT2": f"{config.truelat2:g}",
         "STAND_LON": f"{config.stand_lon:g}",
         "GEOG_DATA_PATH": str(geog_root),
+        "GEOG_DATA_RES": "lowres" if config.geography_profile == "low" else "default",
         "UNGRIB_PREFIX": "PRES",
     }
     days, hours, minutes, seconds = _duration_values(config)
@@ -101,7 +102,7 @@ This package prepares the case but does not run WPS in version 0.1.
 6. Run `metgrid.exe`; both variants declare `fg_name = 'PRES', 'SFC'`.
 7. Confirm one `met_em.d01.*.nc` file exists for every requested hour before running `real.exe`.
 
-The ERA-interim pressure-level Vtable is used as the initial WPS 4.6 compatibility path because it contains the ECMWF pressure and surface parameter mappings. This handoff still requires an end-to-end ERA5/WPS acceptance test.
+The ERA-interim pressure-level Vtable is used as the WPS 4.6 compatibility path because it contains the required ECMWF pressure and surface parameter mappings. The bundled Netherlands reference case passed this chain with WPS 4.6.0 and WRF 4.7.1, but every newly generated case still requires its own WPS and `real.exe` validation.
 """
     manifest = {
         "schema_version": 1,
@@ -128,7 +129,7 @@ The ERA-interim pressure-level Vtable is used as the initial WPS 4.6 compatibili
         "limitations": [
             "The ERA5 rectangle is a conservative estimate, not an exact projection of WRF corners.",
             "The demonstration physics profile requires scientific review before research use.",
-            "Generated namelists have not yet been validated by WPS or real.exe.",
+            "Validation status is not inferred; run WPS and real.exe for this generated case.",
         ],
     }
     paths = {

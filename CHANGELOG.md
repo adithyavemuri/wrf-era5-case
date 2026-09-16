@@ -14,3 +14,7 @@
 - Separate configuration replacement from explicit ERA5 redownloads.
 - Avoid initializing the CDS network client when every requested GRIB file is
   already available locally.
+- Select WPS `lowres` interpolation names when the low-resolution mandatory
+  geodata profile is configured.
+- Validate the Netherlands demonstration case with downloaded ERA5 data through
+  WPS 4.6.0 and WRF 4.7.1 `real.exe`.

@@ -14,7 +14,7 @@
  j_parent_start    = 1,
  e_we              = @E_WE@,
  e_sn              = @E_SN@,
- geog_data_res     = 'default',
+ geog_data_res     = '@GEOG_DATA_RES@',
  dx = @DX@,
  dy = @DY@,
  map_proj = 'lambert',
