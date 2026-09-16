@@ -24,6 +24,7 @@ ny = 100
 vertical_levels = 40
 
 [era5]
+forcing_mode = "reanalysis"
 directory = "era5"
 margin_degrees = 1.0
 

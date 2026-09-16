@@ -1,3 +1,3 @@
-"""Prepare reproducible ERA5-driven WRF cases."""
+"""Prepare reproducible WRF cases forced by ERA5 reanalysis."""
 
 __version__ = "0.1.0"

@@ -117,7 +117,11 @@ The ERA-interim pressure-level Vtable is used as the WPS 4.6 compatibility path 
             "spacing_metres": [config.dx, config.dy],
             "era5_area_nwse": era5_area(config),
         },
-        "profiles": {"physics": config.physics_profile, "geodata": config.geography_profile},
+        "profiles": {
+            "forcing": f"ERA5 {config.forcing_mode}",
+            "physics": config.physics_profile,
+            "geodata": config.geography_profile,
+        },
         "inputs": {
             "geodata": str(geog_root),
             "era5_requests": [
@@ -127,6 +131,7 @@ The ERA-interim pressure-level Vtable is used as the WPS 4.6 compatibility path 
         },
         "configuration_sha256": hashlib.sha256(config.source.read_bytes()).hexdigest(),
         "limitations": [
+            "This is a WRF simulation forced by ERA5 reanalysis, not a newly produced reanalysis.",
             "The ERA5 rectangle is a conservative estimate, not an exact projection of WRF corners.",
             "The demonstration physics profile requires scientific review before research use.",
             "Validation status is not inferred; run WPS and real.exe for this generated case.",

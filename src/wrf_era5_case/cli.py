@@ -17,7 +17,7 @@ from .validation import checks_pass, run_checks
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="wrf-era5-case",
-        description="Prepare transparent ERA5-driven WRF cases without root access.",
+        description="Prepare transparent WRF cases forced by ERA5 reanalysis without root access.",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -69,6 +69,7 @@ def _print_plan(config: CaseConfig) -> None:
     print(f"Case:                 {config.name}")
     print(f"Period (UTC):         {config.start.isoformat(' ')} to {config.end.isoformat(' ')}")
     print(f"Duration:             {config.duration_seconds / 3600:g} hours")
+    print(f"Forcing mode:         ERA5 {config.forcing_mode}")
     print(f"ERA5 times:           {len(times)} hourly states, including the end time")
     print(f"ERA5 area (N/W/S/E):  {north}, {west}, {south}, {east}")
     print(f"ERA5 daily requests:  {len(requests)} ({len(requests) // 2} days x 2 data families)")

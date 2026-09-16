@@ -1,9 +1,18 @@
 # Capabilities and limitations
 
+## Scientific scope
+
+Version 0.1 creates WRF limited-area simulations initialized and forced by
+ERA5 reanalysis. This is commonly described as ERA5-driven dynamical
+downscaling. It does not assimilate observations and therefore does not produce
+a new reanalysis dataset.
+
 ## Version 0.1 supports
 
 - One Lambert-projection WRF domain.
 - Hourly ERA5 pressure-level and single-level GRIB requests.
+- ERA5 `product_type = reanalysis` only, enforced in both configuration and CDS
+  request generation.
 - Exact daily request JSON records, including the simulation end time.
 - The complete 37-level ERA5 pressure-level set by default.
 - Official mandatory low- or high-resolution WPS geodata packages.
@@ -19,6 +28,8 @@
 - Run `geogrid`, `ungrib`, `metgrid`, `real.exe` or `wrf.exe`.
 - Submit or monitor cluster jobs.
 - Support nests, global domains, other forcing datasets or data assimilation.
+- Support forecast products, ERA5 ensemble products, or operational
+  analysis/forecast forcing.
 - Select scientifically optimal physics.
 - Prove that the generated case is scientifically valid.
 - Produce or analyse `wrfout` files.

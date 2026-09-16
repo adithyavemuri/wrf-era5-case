@@ -5,6 +5,9 @@ test proves that the package's generated ERA5 requests and namelists can feed a
 real WPS/WRF preprocessing chain. It does not establish scientific suitability
 for a particular research question.
 
+This is an ERA5-reanalysis-forced WRF simulation, not a newly generated
+reanalysis product.
+
 ## Tested case
 
 - Configuration: `examples/netherlands-demo.toml`

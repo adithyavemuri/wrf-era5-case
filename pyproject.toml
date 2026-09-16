@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "wrf-era5-case"
 version = "0.1.0"
-description = "Prepare transparent, reproducible ERA5-driven WRF cases"
+description = "Prepare transparent WRF cases forced by ERA5 reanalysis"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }

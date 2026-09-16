@@ -42,6 +42,7 @@ class CaseConfig:
     e_vert: int
     margin_degrees: float
     pressure_levels: tuple[int, ...]
+    forcing_mode: str
     era5_directory: Path
     geography_profile: str
     geography_directory: Path
@@ -124,6 +125,7 @@ def load_config(path: str | Path) -> CaseConfig:
         e_vert=int(domain.get("vertical_levels", 40)),
         margin_degrees=float(era5.get("margin_degrees", 1.0)),
         pressure_levels=tuple(int(value) for value in era5.get("pressure_levels", DEFAULT_PRESSURE_LEVELS)),
+        forcing_mode=str(era5.get("forcing_mode", "reanalysis")).lower(),
         era5_directory=_path(era5.get("directory", "data/ERA5"), base),
         geography_profile=str(geodata.get("profile", "low")).lower(),
         geography_directory=_path(geodata.get("directory", "data/WPS_GEOG"), base),
@@ -153,6 +155,8 @@ def validate_config(config: CaseConfig) -> None:
         raise ConfigurationError("domain.vertical_levels must be at least 10")
     if config.margin_degrees < 0:
         raise ConfigurationError("era5.margin_degrees cannot be negative")
+    if config.forcing_mode != "reanalysis":
+        raise ConfigurationError("version 0.1 supports era5.forcing_mode='reanalysis' only")
     if config.geography_profile not in {"low", "high"}:
         raise ConfigurationError("geodata.profile must be 'low' or 'high'")
     if config.physics_profile != "demonstration":

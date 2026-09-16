@@ -12,6 +12,7 @@ def test_loads_human_readable_case(tmp_path):
     assert config.duration_seconds == 6 * 3600
     assert config.e_we == 100
     assert len(config.pressure_levels) == 37
+    assert config.forcing_mode == "reanalysis"
     assert config.era5_directory == (tmp_path / "era5").resolve()
 
 
@@ -34,3 +35,11 @@ def test_converts_explicit_timezone_to_utc(tmp_path):
     config = load_config(path)
     assert config.start.isoformat() == "2025-01-10T00:00:00"
     assert config.end.isoformat() == "2025-01-10T06:00:00"
+
+
+def test_rejects_non_reanalysis_forcing(tmp_path):
+    path = write_config(tmp_path)
+    text = path.read_text().replace('forcing_mode = "reanalysis"', 'forcing_mode = "forecast"')
+    path.write_text(text)
+    with pytest.raises(ConfigurationError, match="reanalysis.*only"):
+        load_config(path)

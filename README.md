@@ -1,9 +1,15 @@
 # WRF ERA5 Case
 
 `wrf-era5-case` prepares a transparent, reproducible, single-domain WRF case
-from ERA5 pressure-level and surface data. It downloads or reuses mandatory
-WPS geographical data, preserves the exact CDS requests, and generates normal
-human-editable `namelist.wps` and `namelist.input` files.
+initialized and forced by ERA5 reanalysis pressure-level and surface data. It
+downloads or reuses mandatory WPS geographical data, preserves the exact CDS
+requests, and generates normal human-editable `namelist.wps` and
+`namelist.input` files.
+
+Version 0.1 supports **ERA5 reanalysis forcing only**. The result is a WRF
+limited-area simulation (dynamical downscaling of ERA5), not a newly generated
+reanalysis product. Forecast forcing, ERA5 ensemble products, operational
+analysis/forecast data and data-assimilation workflows are outside its scope.
 
 This first release prepares inputs. It does not compile WRF, run WPS, submit a
 simulation, select scientifically optimal physics, or analyse `wrfout` files.
@@ -33,6 +39,8 @@ Copy and edit the example:
 cp examples/netherlands-demo.toml my-case.toml
 editor my-case.toml
 ```
+
+Keep `era5.forcing_mode = "reanalysis"`; other forcing modes are rejected.
 
 All case dates are interpreted as UTC. Explicit timezone offsets are converted
 to UTC before requests and namelists are generated.
