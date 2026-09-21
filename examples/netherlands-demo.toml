@@ -39,10 +39,7 @@ build_root = "../../wrf-arw-local"
 [runtime]
 execution = "local"
 mpi_processes = 4
-# These two paths reuse the completed proof-of-concept. Remove them in a new
-# case to use the default case-local workflow directories.
-wps_run_directory = "../cases/netherlands_demo/acceptance/wps-run"
-wrf_run_directory = "../cases/netherlands_demo/acceptance/wrf-run"
+run_id = "demo-001"
 
 [analysis]
 enabled = true
@@ -50,7 +47,6 @@ domain = "d01"
 latitude = 52.0
 longitude = 5.0
 wrf_tools_executable = "../../WRF_tools/.venv/bin/wrf-tools"
-output_directory = "../cases/netherlands_demo/reports/wrf-tools"
 
 [output]
 case_directory = "../cases/netherlands_demo"

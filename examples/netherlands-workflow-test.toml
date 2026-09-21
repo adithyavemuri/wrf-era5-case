@@ -38,6 +38,7 @@ build_root = "../../wrf-arw-local"
 [runtime]
 execution = "local"
 mpi_processes = 4
+run_id = "workflow-test-001"
 
 [analysis]
 enabled = true
@@ -45,7 +46,6 @@ domain = "d01"
 latitude = 52.0
 longitude = 5.0
 wrf_tools_executable = "../../WRF_tools/.venv/bin/wrf-tools"
-output_directory = "../cases/netherlands_workflow_test/reports/wrf-tools"
 
 [output]
 case_directory = "../cases/netherlands_workflow_test"
