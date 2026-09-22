@@ -1,12 +1,15 @@
 # WRF ERA5 Case
 
-`wrf-era5-case` prepares a transparent, reproducible, single-domain WRF case
+Current release: **v0.2.0**
+
+`wrf-era5-case` prepares transparent, reproducible single-domain or stationary
+one-way nested WRF cases
 initialized and forced by ERA5 reanalysis pressure-level and surface data. It
 downloads or reuses mandatory WPS geographical data, preserves the exact CDS
 requests, and generates normal human-editable `namelist.wps` and
 `namelist.input` files.
 
-Version 0.1 supports **ERA5 reanalysis forcing only**. The result is a WRF
+Version 0.2 supports **ERA5 reanalysis forcing only**. The result is a WRF
 limited-area simulation (dynamical downscaling of ERA5), not a newly generated
 reanalysis product. Forecast forcing, ERA5 ensemble products, operational
 analysis/forecast data and data-assimilation workflows are outside its scope.

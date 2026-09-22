@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: "Vemuri"
     given-names: "Adithya"
-version: 0.1.0
-date-released: 2026-09-15
+version: 0.2.0
+date-released: 2026-09-22
 license: MIT
 repository-code: "https://github.com/adithyavemuri/wrf-era5-case"
