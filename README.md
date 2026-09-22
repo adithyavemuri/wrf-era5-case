@@ -82,14 +82,73 @@ the separate `prepare --force-era5` option.
 The standalone `configure` command requires the configured geodata to be
 installed so it can write the exact extracted `geog_data_path`.
 
+## Control WRF from TOML
+
+Physics, dynamics and selected runtime settings can be changed with exact WRF
+namelist keys. Users do not need to edit the generated `namelist.input`:
+
+```toml
+[namelist.physics]
+bl_pbl_physics = 1
+sf_sfclay_physics = 1
+sf_surface_physics = 2
+
+[namelist.dynamics]
+diff_opt = 2
+km_opt = 5
+
+[namelist.time_control]
+history_interval = 60
+
+[namelist.domains]
+time_step = 54
+```
+
+Run `wrf-era5-case plan CASE.toml` to inspect all effective namelist values.
+Only documented keys exposed by the package are accepted; misspelled keys and
+incorrect TOML types fail before downloads or generated files are changed. See
+`examples/netherlands-km5.toml` for a complete workflow configuration and
+`docs/NAMELIST_CONFIGURATION.md` for the supported-key table and validation
+boundary.
+
+## Vertical grid
+
+If `[vertical_grid]` is omitted, WRF calculates its normal default eta-level
+distribution using each domain's `vertical_levels` value. An explicit
+terrain-following grid can instead be supplied:
+
+```toml
+[vertical_grid]
+eta_levels = [1.0, 0.98, 0.95, 0.90, 0.80, 0.65, 0.50, 0.30, 0.10, 0.05, 0.0]
+```
+
+Values must start at 1.0, end at 0.0 and decrease strictly. The number of
+values must equal `vertical_levels` for every configured domain. The package
+validates these structural constraints but the scientific suitability and
+layer spacing remain the user's responsibility.
+
+## One-way nested domains
+
+Repeat `[[domain]]` to define stationary child domains. The package validates
+their parent relationships and geometry, then generates synchronized WPS/WRF
+arrays. See `examples/netherlands-nested.toml` and
+`docs/NESTED_DOMAINS.md`. Existing single `[domain]` configurations remain
+supported.
+
+## Projection and ERA5 coverage
+
+Set `domain.map_projection` to `lambert` (default) or `mercator`. The package
+projects the four outer-domain corners, converts them back to latitude and
+longitude, constructs the enclosing ERA5 rectangle and then applies
+`era5.margin_degrees`. The exact requested rectangle is always shown by
+`plan` before downloading.
+
 ## Generated case
 
 ```text
 cases/netherlands_demo/
 ├── case.toml
 ├── namelist.wps
-├── namelist.wps.pressure
-├── namelist.wps.surface
 ├── namelist.input
 ├── PHYSICS_PROFILE.md
 ├── WPS_STEPS.md

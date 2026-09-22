@@ -28,7 +28,9 @@ reanalysis product.
    levels, plus the requested surface and soil fields, for every hour.
 3. `geogrid.exe` completed using the `lowres` interpolation names required by
    the low-resolution geodata package.
-4. Two `ungrib.exe` passes produced seven `PRES:*` and seven `SFC:*` files.
+4. A named-run acceptance test on 2026-09-21 combined both GRIB inputs in one
+   `ungrib.exe` pass using WPS `Vtable.ECMWF` and produced seven hourly `ERA5:*`
+   intermediate states.
 5. `metgrid.exe` produced seven hourly `met_em.d01.*.nc` files.
 6. `real.exe` ran with four MPI ranks. Every rank reported
    `SUCCESS COMPLETE REAL_EM INIT`.

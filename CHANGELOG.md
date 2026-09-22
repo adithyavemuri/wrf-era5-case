@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 - Unreleased
+## 0.2.0 - 2026-09-22
 
 - Add human-readable TOML case configuration.
 - Add prerequisite checks and a read-only case plan.
@@ -21,3 +21,17 @@
 - Make the ERA5-reanalysis-only scope explicit and reject other forcing modes.
 - Align future history files to requested output times with WRF's
   `adjust_output_times` option.
+- Replace the legacy split preprocessing path with one combined ERA5
+  `ungrib.exe` pass using the WPS-provided `Vtable.ECMWF`.
+- Validate the combined preprocessing route through WPS, `real.exe`, `wrf.exe`
+  and WRF_tools report generation with the Netherlands reference case.
+- Add strict TOML-controlled WRF physics, dynamics, time-control and domain
+  options, effective-configuration planning, and manifest provenance.
+- Add backward-compatible stationary one-way nested-domain configuration,
+  geometry validation and synchronized WPS/WRF namelist arrays.
+- Validate the two-domain Netherlands example through WPS, `real.exe`, the
+  complete nested forecast and a `d02` WRF_tools PDF report.
+- Add projection-aware ERA5 bounds, configurable restart checkpoints and
+  validated optional eta-level grids.
+
+## 0.1.0

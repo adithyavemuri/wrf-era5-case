@@ -3,95 +3,53 @@
  run_hours                           = @RUN_HOURS@,
  run_minutes                         = @RUN_MINUTES@,
  run_seconds                         = @RUN_SECONDS@,
- start_year                          = @START_YEAR@,
- start_month                         = @START_MONTH@,
- start_day                           = @START_DAY@,
- start_hour                          = @START_HOUR@,
- end_year                            = @END_YEAR@,
- end_month                           = @END_MONTH@,
- end_day                             = @END_DAY@,
- end_hour                            = @END_HOUR@,
+ start_year                          = @START_YEARS@,
+ start_month                         = @START_MONTHS@,
+ start_day                           = @START_DAYS@,
+ start_hour                          = @START_HOURS@,
+ end_year                            = @END_YEARS@,
+ end_month                           = @END_MONTHS@,
+ end_day                             = @END_DAYS@,
+ end_hour                            = @END_HOURS@,
  interval_seconds                    = @INTERVAL_SECONDS@,
- input_from_file                     = .true.,
- history_interval                    = @HISTORY_INTERVAL@,
- adjust_output_times                 = .true.,
- frames_per_outfile                  = 1,
- restart                             = .false.,
- io_form_history                     = 2,
- io_form_restart                     = 2,
- io_form_input                       = 2,
- io_form_boundary                    = 2,
+ input_from_file                     = @INPUT_FROM_FILE@,
+@TIME_CONTROL_OPTIONS@
 /
 
 &domains
- time_step                           = @TIME_STEP@,
- max_dom                             = 1,
- e_we                                = @E_WE@,
- e_sn                                = @E_SN@,
- e_vert                              = @E_VERT@,
+ max_dom                             = @MAX_DOM@,
+ e_we                                = @E_WES@,
+ e_sn                                = @E_SNS@,
+ e_vert                              = @E_VERTS@,
  num_metgrid_levels                  = @NUM_METGRID_LEVELS@,
- p_top_requested                     = 5000,
- dx                                  = @DX@,
- dy                                  = @DY@,
- grid_id                             = 1,
- parent_id                           = 1,
- i_parent_start                      = 1,
- j_parent_start                      = 1,
- parent_grid_ratio                   = 1,
- parent_time_step_ratio              = 1,
- feedback                            = 0,
- smooth_option                       = 0,
+ dx                                  = @DXS@,
+ dy                                  = @DYS@,
+ grid_id                             = @GRID_IDS@,
+ parent_id                           = @PARENT_IDS@,
+ i_parent_start                      = @I_PARENT_STARTS@,
+ j_parent_start                      = @J_PARENT_STARTS@,
+ parent_grid_ratio                   = @PARENT_GRID_RATIOS@,
+ parent_time_step_ratio              = @PARENT_TIME_STEP_RATIOS@,
+@VERTICAL_GRID_OPTIONS@
+@DOMAIN_OPTIONS@
 /
 
 &physics
  ! Demonstration profile: inspect and adapt these choices for research use.
- mp_physics                          = 4,
- ra_lw_physics                       = 4,
- ra_sw_physics                       = 4,
- radt                                = 9,
- sf_sfclay_physics                   = 1,
- sf_surface_physics                  = 2,
- bl_pbl_physics                      = 1,
- bldt                                = 0,
- cu_physics                          = 1,
- cudt                                = 5,
- isfflx                              = 1,
- ifsnow                              = 1,
- icloud                              = 1,
- surface_input_source                = 1,
- num_soil_layers                     = 4,
- sf_urban_physics                    = 0,
- maxiens                             = 1,
- maxens                              = 3,
- maxens2                             = 3,
- maxens3                             = 16,
- ensdim                              = 144,
+@PHYSICS_OPTIONS@
 /
 
 &fdda
 /
 
 &dynamics
- w_damping                           = 0,
- diff_opt                            = 1,
- km_opt                              = 4,
- diff_6th_opt                        = 0,
- diff_6th_factor                     = 0.12,
- base_temp                           = 290.,
- damp_opt                            = 0,
- zdamp                               = 5000.,
- dampcoef                            = 0.2,
- khdif                               = 0,
- kvdif                               = 0,
- non_hydrostatic                     = .true.,
- moist_adv_opt                       = 1,
- scalar_adv_opt                      = 1,
+@DYNAMICS_OPTIONS@
 /
 
 &bdy_control
  spec_bdy_width                      = 5,
- specified                           = .true.,
- nested                              = .false.,
+ specified                           = @SPECIFIED@,
+ nested                              = @NESTED@,
 /
 
 &grib2

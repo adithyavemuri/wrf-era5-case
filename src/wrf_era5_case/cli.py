@@ -75,12 +75,23 @@ def _print_plan(config: CaseConfig) -> None:
     print(f"ERA5 daily requests:  {len(requests)} ({len(requests) // 2} days x 2 data families)")
     print(f"ERA5 files available: {available} of {len(requests)}")
     print(f"Pressure levels:      {len(config.pressure_levels)}")
+    print(f"WRF domains:          {len(config.domains)}")
+    for domain in config.domains:
+        print(
+            f"  {domain.name}: {domain.e_we} x {domain.e_sn} at "
+            f"{domain.dx:g} x {domain.dy:g} m; parent d{domain.parent_id:02d}; "
+            f"ratio {domain.parent_grid_ratio}"
+        )
     print(f"Geodata profile:      {config.geography_profile}")
     print(f"Geodata download:     approximately {GEODATA_COMPRESSED_BYTES[config.geography_profile] / 1024**3:.2f} GiB compressed")
     print(f"Geodata directory:    {config.geography_directory}")
     print(f"ERA5 directory:       {config.era5_directory}")
     print(f"Case directory:       {config.case_directory}")
     print(f"Physics profile:      {config.physics_profile} (technical demonstration only)")
+    print("Effective WRF namelist options:")
+    for group, options in config.namelist_options.items():
+        rendered = ", ".join(f"{key}={value}" for key, value in options.items())
+        print(f"  &{group}: {rendered}")
     print("\nNo files were written or downloaded.")
     print("The ERA5 rectangle is a conservative estimate; inspect it before downloading.")
 

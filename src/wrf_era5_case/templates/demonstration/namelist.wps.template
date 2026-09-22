@@ -1,23 +1,23 @@
 &share
  wrf_core = 'ARW',
- max_dom = 1,
- start_date = '@START_DATE@',
- end_date   = '@END_DATE@',
+ max_dom = @MAX_DOM@,
+ start_date = @START_DATES@,
+ end_date   = @END_DATES@,
  interval_seconds = @INTERVAL_SECONDS@,
  io_form_geogrid = 2,
 /
 
 &geogrid
- parent_id         = 1,
- parent_grid_ratio = 1,
- i_parent_start    = 1,
- j_parent_start    = 1,
- e_we              = @E_WE@,
- e_sn              = @E_SN@,
- geog_data_res     = '@GEOG_DATA_RES@',
+ parent_id         = @PARENT_IDS@,
+ parent_grid_ratio = @PARENT_GRID_RATIOS@,
+ i_parent_start    = @I_PARENT_STARTS@,
+ j_parent_start    = @J_PARENT_STARTS@,
+ e_we              = @E_WES@,
+ e_sn              = @E_SNS@,
+ geog_data_res     = @GEOG_DATA_RESOLUTIONS@,
  dx = @DX@,
  dy = @DY@,
- map_proj = 'lambert',
+ map_proj = '@MAP_PROJECTION@',
  ref_lat   = @REF_LAT@,
  ref_lon   = @REF_LON@,
  truelat1  = @TRUELAT1@,
@@ -28,10 +28,10 @@
 
 &ungrib
  out_format = 'WPS',
- prefix = '@UNGRIB_PREFIX@',
+ prefix = 'ERA5',
 /
 
 &metgrid
- fg_name = 'PRES', 'SFC',
+ fg_name = 'ERA5',
  io_form_metgrid = 2,
 /

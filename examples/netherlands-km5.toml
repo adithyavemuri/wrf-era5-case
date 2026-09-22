@@ -1,0 +1,66 @@
+[case]
+name = "netherlands_km5"
+start = "2025-01-10 00:00:00"
+end = "2025-01-10 06:00:00"
+interval_seconds = 3600
+
+[domain]
+center_latitude = 52.0
+center_longitude = 5.0
+true_latitude_1 = 52.0
+true_latitude_2 = 52.0
+standard_longitude = 5.0
+dx = 9000
+dy = 9000
+nx = 100
+ny = 100
+vertical_levels = 40
+
+[era5]
+forcing_mode = "reanalysis"
+directory = "../data/ERA5"
+margin_degrees = 1.0
+
+[geodata]
+profile = "low"
+directory = "../data/WPS_GEOG"
+
+[wrf]
+physics_profile = "demonstration"
+
+# Use exact WRF namelist keys in these controlled sections. The package rejects
+# unknown keys and incorrect TOML value types before generating namelist.input.
+[namelist.physics]
+bl_pbl_physics = 1
+sf_sfclay_physics = 1
+sf_surface_physics = 2
+
+[namelist.dynamics]
+diff_opt = 2
+km_opt = 5
+
+[namelist.time_control]
+history_interval = 60
+
+[namelist.domains]
+time_step = 54
+
+[build]
+mode = "reuse-or-build"
+autocompiler = "../../wrf-autocompiler/build_wrf.sh"
+build_root = "../../wrf-arw-local"
+
+[runtime]
+execution = "local"
+mpi_processes = 4
+run_id = "netherlands-km5-001"
+
+[analysis]
+enabled = true
+domain = "d01"
+latitude = 52.0
+longitude = 5.0
+wrf_tools_executable = "../../WRF_tools/.venv/bin/wrf-tools"
+
+[output]
+case_directory = "../cases/netherlands_km5"

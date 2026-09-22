@@ -18,6 +18,9 @@ a new reanalysis dataset.
 - Official mandatory low- or high-resolution WPS geodata packages.
 - Shared data caches and reuse of recognizable completed downloads.
 - Human-readable `namelist.wps`, `namelist.input`, physics notes and manifest.
+- Strict TOML overrides for supported `&physics`, `&dynamics`, `&time_control`
+  and `&domains` keys, with the effective configuration recorded in the case
+  manifest.
 - WRF 4.7.1/WPS 4.6.0 demonstration-case preparation on Linux.
 - No root access.
 
@@ -36,8 +39,9 @@ a new reanalysis dataset.
 
 ## Known technical boundaries
 
-- The ERA5 bounding rectangle is a conservative spherical estimate. It is not
-  calculated from exact projected WRF corner coordinates.
+- ERA5 coverage is derived from the projected outer-domain corners for the
+  supported Lambert and Mercator projections, then expanded by the configured
+  safety margin.
 - Built-in GRIB validation checks the GRIB signature and file size. The tested
   Netherlands case received the intended variables, hours and pressure levels,
   as independently inspected with the WPS GRIB reader; arbitrary future
@@ -45,8 +49,11 @@ a new reanalysis dataset.
 - The default metgrid-level count assumes the selected 37 pressure levels plus
   a surface level. This was confirmed for the tested Netherlands case but is
   not dynamically inferred from arbitrary input files.
-- The current ERA5 variable list and ERA-Interim-compatible WPS Vtable passed
-  the documented WPS 4.6.0 and WRF 4.7.1 `real.exe` acceptance test. This is a
-  technical workflow validation, not proof that the demonstration setup is
-  scientifically suitable for a study.
+- The ERA5 variable list and combined `Vtable.ECMWF` preprocessing route passed
+  an end-to-end WPS 4.6.0 and WRF 4.7.1 acceptance run through `wrf.exe` and
+  report generation. This is technical workflow validation, not proof that
+  the demonstration setup is scientifically suitable for a study.
 - The official high-resolution WPS geodata package needs substantial storage.
+- The TOML namelist interface intentionally exposes a reviewed subset of WRF
+  keys. It validates names and basic value types, but it does not yet prove the
+  scientific or cross-option compatibility of every accepted combination.
