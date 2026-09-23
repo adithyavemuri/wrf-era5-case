@@ -149,7 +149,7 @@ def _case_contents(config: CaseConfig, requests: list[Era5Request]) -> tuple[dic
     profile_text += _effective_namelist_markdown(config)
     instructions = f"""# WPS handoff for {config.name}
 
-This package prepares the case but does not run WPS in version 0.1.
+This package prepares the case but does not run WPS in version 0.2.
 
 1. Use `namelist.wps` to run `geogrid.exe`.
 2. Link WPS `Vtable.ECMWF` as `Vtable`.

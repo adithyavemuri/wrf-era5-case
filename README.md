@@ -14,7 +14,7 @@ limited-area simulation (dynamical downscaling of ERA5), not a newly generated
 reanalysis product. Forecast forcing, ERA5 ensemble products, operational
 analysis/forecast data and data-assimilation workflows are outside its scope.
 
-This first release prepares inputs. It does not compile WRF, run WPS, submit a
+This package prepares inputs. It does not compile WRF, run WPS, submit a
 simulation, select scientifically optimal physics, or analyse `wrfout` files.
 
 ## Prerequisite: configure CDS yourself
@@ -130,6 +130,23 @@ values must equal `vertical_levels` for every configured domain. The package
 validates these structural constraints but the scientific suitability and
 layer spacing remain the user's responsibility.
 
+## Restart checkpoints
+
+Fresh runs write restart checkpoints by default. The automatic interval follows
+the finest configured grid: 60 minutes at 500 m or finer, 120 minutes above
+500 m through 1 km, and 180 minutes above 1 km. Override or disable it in TOML:
+
+```toml
+[restart]
+enabled = true
+interval_minutes = 60
+retain = 2       # used by wrf-hindcast-workflow
+resume = "auto" # used by wrf-hindcast-workflow
+```
+
+This package writes `restart_interval` into `namelist.input`; automatic restart
+selection and resumption belong to the separate workflow orchestrator.
+
 ## One-way nested domains
 
 Repeat `[[domain]]` to define stationary child domains. The package validates
@@ -168,16 +185,16 @@ The included `demonstration` physics profile is a visible technical starting
 point. It is not automatically valid for every location, resolution, season or
 research question. Inspect the generated namelist and document any changes.
 
-The ERA5 download rectangle is a conservative geometric estimate around the
-single Lambert domain. Inspect the printed north/west/south/east bounds before
-submitting a large CDS request.
+The ERA5 rectangle encloses the projected outer-domain corners and adds the
+configured safety margin. Inspect the printed north/west/south/east bounds
+before submitting a large CDS request.
 
 See [CAPABILITIES_AND_LIMITATIONS.md](docs/CAPABILITIES_AND_LIMITATIONS.md) for
-the precise version 0.1 boundary.
+the precise version 0.2 boundary.
 
-The included Netherlands example has also been exercised end to end through
-WPS and `real.exe`. See [VALIDATION.md](docs/VALIDATION.md) for the exact test
-case, software versions, outputs and remaining boundary.
+The included single- and two-domain Netherlands examples have been exercised
+through WPS, `real.exe`, `wrf.exe`, validation and report generation. See
+[VALIDATION.md](docs/VALIDATION.md) for the exact boundary.
 
 ## Tests
 

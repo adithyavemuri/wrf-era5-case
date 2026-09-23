@@ -323,7 +323,7 @@ def validate_config(config: CaseConfig) -> None:
     if config.start.minute or config.start.second or config.end.minute or config.end.second:
         raise ConfigurationError("ERA5 demonstration cases must start and end on complete hours")
     if config.interval_seconds != 3600:
-        raise ConfigurationError("version 0.1 supports hourly ERA5 input (interval_seconds=3600) only")
+        raise ConfigurationError("version 0.2 supports hourly ERA5 input (interval_seconds=3600) only")
     if not -90 <= config.ref_lat <= 90 or not -180 <= config.ref_lon <= 180:
         raise ConfigurationError("domain centre must be valid latitude/longitude")
     if config.map_projection not in {"lambert", "mercator"}:
@@ -371,11 +371,11 @@ def validate_config(config: CaseConfig) -> None:
     if config.margin_degrees < 0:
         raise ConfigurationError("era5.margin_degrees cannot be negative")
     if config.forcing_mode != "reanalysis":
-        raise ConfigurationError("version 0.1 supports era5.forcing_mode='reanalysis' only")
+        raise ConfigurationError("version 0.2 supports era5.forcing_mode='reanalysis' only")
     if config.geography_profile not in {"low", "high"}:
         raise ConfigurationError("geodata.profile must be 'low' or 'high'")
     if config.physics_profile != "demonstration":
-        raise ConfigurationError("version 0.1 supports wrf.physics_profile='demonstration' only")
+        raise ConfigurationError("version 0.2 supports wrf.physics_profile='demonstration' only")
     if not config.pressure_levels:
         raise ConfigurationError("era5.pressure_levels cannot be empty")
     if len(config.pressure_levels) != len(set(config.pressure_levels)):

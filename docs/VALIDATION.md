@@ -1,6 +1,7 @@
 # Acceptance validation
 
-The Netherlands demonstration case was validated locally on 2026-09-16. This
+The Netherlands demonstration cases were validated locally through
+2026-09-22. These tests
 test proves that the package's generated ERA5 requests and namelists can feed a
 real WPS/WRF preprocessing chain. It does not establish scientific suitability
 for a particular research question.
@@ -41,10 +42,20 @@ The generated validation products remain under the ignored `cases/` tree and
 are not part of the source distribution. CDS credentials, downloaded ERA5 data
 and generated WRF inputs are not tracked.
 
+## Full two-domain acceptance
+
+The `examples/netherlands-nested.toml` case completed a fresh named run as
+`full-test-001`: WPS, `real.exe`, `wrf.exe`, all fourteen expected hourly
+domain outputs, the compact scientific report, filename-only provenance,
+configuration hash and build manifest passed `wrf-hindcast validate`.
+Restart files were written at the configured 180-minute interval. Deliberate
+interruption and automatic recovery have not yet been acceptance-tested.
+
 ## What remains
 
-- Run and evaluate `wrf.exe`; this package deliberately stops at case
-  preparation and does not currently execute or monitor simulations.
+- This package deliberately stops at case preparation; execution and monitoring
+  remain the responsibility of WRF itself or an external orchestrator.
 - Obtain scientific review of the demonstration physics choices.
-- Test the high-resolution geodata profile and additional domains/dates.
+- Test the high-resolution geodata profile, another geography/date and more
+  than two domains.
 - Build and inspect release artifacts on the supported Python versions.
