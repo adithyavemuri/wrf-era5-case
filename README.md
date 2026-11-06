@@ -1,6 +1,6 @@
 # WRF ERA5 Case
 
-Current release: **v0.2.0**
+Current version: **v0.2.1** (unreleased).
 
 `wrf-era5-case` prepares transparent, reproducible single-domain or stationary
 one-way nested WRF cases
@@ -77,7 +77,22 @@ wrf-era5-case download-era5 my-case.toml
 wrf-era5-case configure my-case.toml
 ```
 
-Existing recognizable GRIB files and installed geodata are reused. Existing
+ERA5 reuse checks actual GRIB message headers with ecCodes: requested area,
+UTC hours, variables and pressure levels must all be covered. Filenames include
+a request fingerprint. Older date-only files can still supply compatible
+records, but a GRIB prefix or matching date alone is never enough. Missing
+records are requested from CDS, verified, and assembled into a case bundle;
+existing source files remain intact. Spatially insufficient records are
+downloaded for the requested rectangle, never borrowed from another location.
+This supports the CDS 0.25-degree regular latitude/longitude grid; it does not splice spatial
+tiles or regrid an incompatible cache. Request/provenance sidecars accompany
+new bundles. `plan` checks coverage without downloading or writing files.
+
+For an older prepared case, `download-era5` creates the new bundles; use
+`configure --force` only when you intend to update that case's configuration.
+Completed run snapshots are not automatically rewritten.
+
+Installed geodata are reused. Existing
 generated files are reused when they match. Human-edited or stale case files
 are not overwritten unless `configure --force` or `prepare --force-config` is
 explicitly used. Forcing configuration never redownloads ERA5; that requires

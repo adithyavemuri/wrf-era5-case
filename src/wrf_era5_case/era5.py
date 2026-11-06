@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import math
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -67,7 +69,11 @@ def build_requests(config: CaseConfig) -> list[Era5Request]:
     for value in requested_times(config):
         by_day.setdefault(value.strftime("%Y-%m-%d"), []).append(value.strftime("%H:%M"))
 
-    area = list(era5_area(config))
+    north, west, south, east = era5_area(config)
+    # ERA5 CDS regular grids are 0.25 degrees; round OUTWARD, never shrink
+    # the requested coverage by rounding a geographic boundary inward.
+    area = [math.ceil(north*4)/4, math.floor(west*4)/4,
+            math.floor(south*4)/4, math.ceil(east*4)/4]
     requests: list[Era5Request] = []
     for day, times in by_day.items():
         stamp = day.replace("-", "")
@@ -84,15 +90,17 @@ def build_requests(config: CaseConfig) -> list[Era5Request]:
         pressure = dict(shared)
         pressure["variable"] = list(PRESSURE_VARIABLES)
         pressure["pressure_level"] = [str(value) for value in config.pressure_levels]
-        requests.append(Era5Request(
-            "pressure-levels", PRESSURE_DATASET, pressure,
-            config.era5_directory / f"era5-pressure-levels-{stamp}.grib",
-        ))
         single = dict(shared)
         single["variable"] = list(SINGLE_VARIABLES)
+        pressure_key = hashlib.sha256(json.dumps(pressure, sort_keys=True).encode()).hexdigest()[:16]
+        single_key = hashlib.sha256(json.dumps(single, sort_keys=True).encode()).hexdigest()[:16]
+        requests.append(Era5Request(
+            "pressure-levels", PRESSURE_DATASET, pressure,
+            config.era5_directory / f"era5-pressure-levels-{stamp}-{pressure_key}.grib",
+        ))
         requests.append(Era5Request(
             "single-levels", SINGLE_DATASET, single,
-            config.era5_directory / f"era5-single-levels-{stamp}.grib",
+            config.era5_directory / f"era5-single-levels-{stamp}-{single_key}.grib",
         ))
     return requests
 
@@ -122,38 +130,21 @@ def download_requests(
     force: bool = False,
     client_factory: Callable[[], Any] | None = None,
 ) -> tuple[list[Path], list[Path]]:
-    pending: list[Era5Request] = []
-    reused: list[Path] = []
-    for item in requests:
-        if is_grib(item.target) and not force:
-            reused.append(item.target)
-            continue
-        if item.target.exists() and not force:
-            raise RuntimeError(f"existing file is not a recognizable GRIB file: {item.target}")
-        pending.append(item)
+    from .grib_cache import cached_records, materialize, required
 
-    # cdsapi.Client may contact CDS while it initializes. Do not construct it
-    # when every requested file can be reused locally.
-    if not pending:
-        return [], reused
-
-    if client_factory is None:
-        try:
-            import cdsapi
-        except ModuleNotFoundError as exc:
-            raise RuntimeError("cdsapi is not installed; install the package before downloading") from exc
-        client_factory = cdsapi.Client
-
-    client = client_factory()
     downloaded: list[Path] = []
-    for item in pending:
-        item.target.parent.mkdir(parents=True, exist_ok=True)
-        temporary = item.target.with_suffix(item.target.suffix + ".part")
-        if temporary.exists():
-            temporary.unlink()
-        client.retrieve(item.dataset, item.request, str(temporary))
-        if not is_grib(temporary):
-            raise RuntimeError(f"CDS response is not a recognizable GRIB file: {temporary}")
-        temporary.replace(item.target)
-        downloaded.append(item.target)
+    reused: list[Path] = []
+    client = None
+    for item in requests:
+        needs_download = force or not cached_records(item).keys() >= required(item.request)
+        if needs_download and client is None:
+            if client_factory is None:
+                try:
+                    import cdsapi
+                except ModuleNotFoundError as exc:
+                    raise RuntimeError("Install cdsapi before downloading ERA5") from exc
+                client_factory = cdsapi.Client
+            client = client_factory()
+        changed = materialize(item, force=force, client=client)
+        (downloaded if changed else reused).append(item.target)
     return downloaded, reused

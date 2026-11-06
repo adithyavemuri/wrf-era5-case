@@ -8,7 +8,8 @@ from pathlib import Path
 from . import __version__
 from .config import CaseConfig, ConfigurationError, load_config
 from .domain import era5_area
-from .era5 import build_requests, download_requests, is_grib, requested_times, write_request_files
+from .era5 import build_requests, download_requests, requested_times, write_request_files
+from .grib_cache import available
 from .geodata import GEODATA_COMPRESSED_BYTES, GEODATA_URLS, download_geodata, geodata_status
 from .namelists import configure_case, require_writable_configuration
 from .validation import checks_pass, run_checks
@@ -65,7 +66,7 @@ def _print_plan(config: CaseConfig) -> None:
     times = requested_times(config)
     requests = build_requests(config)
     north, west, south, east = era5_area(config)
-    available = sum(is_grib(item.target) for item in requests)
+    ready = sum(available(item) for item in requests)
     print(f"Case:                 {config.name}")
     print(f"Period (UTC):         {config.start.isoformat(' ')} to {config.end.isoformat(' ')}")
     print(f"Duration:             {config.duration_seconds / 3600:g} hours")
@@ -73,7 +74,7 @@ def _print_plan(config: CaseConfig) -> None:
     print(f"ERA5 times:           {len(times)} hourly states, including the end time")
     print(f"ERA5 area (N/W/S/E):  {north}, {west}, {south}, {east}")
     print(f"ERA5 daily requests:  {len(requests)} ({len(requests) // 2} days x 2 data families)")
-    print(f"ERA5 files available: {available} of {len(requests)}")
+    print(f"ERA5 coverage ready:  {ready} of {len(requests)} content-checked daily families")
     print(f"Pressure levels:      {len(config.pressure_levels)}")
     print(f"WRF domains:          {len(config.domains)}")
     for domain in config.domains:

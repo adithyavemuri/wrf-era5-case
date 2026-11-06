@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from conftest import write_config
+from conftest import write_config, write_grib
 from wrf_era5_case.config import load_config
 from wrf_era5_case.era5 import build_requests, download_requests, is_grib, requested_times
 
@@ -26,8 +26,7 @@ def test_download_is_atomic_and_reusable(tmp_path):
 
     class Client:
         def retrieve(self, dataset, request, target):
-            with open(target, "wb") as handle:
-                handle.write(b"GRIB" + b"0" * 20)
+            write_grib(target, request)
 
     def must_not_connect():
         raise AssertionError("client factory should not run when all GRIB files are reusable")

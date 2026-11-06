@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .config import CaseConfig
-from .era5 import build_requests, is_grib
+from .era5 import build_requests
+from .grib_cache import available
 from .geodata import geodata_status
 
 
@@ -55,7 +56,7 @@ def run_checks(config: CaseConfig) -> list[Check]:
         checks.append(Check("INFO", "WPS geodata", f"not installed in {config.geography_directory}"))
 
     requests = build_requests(config)
-    ready = sum(is_grib(item.target) for item in requests)
+    ready = sum(available(item) for item in requests)
     checks.append(Check(
         "PASS" if ready == len(requests) else "INFO",
         "ERA5 files", f"{ready} of {len(requests)} daily GRIB files already available",

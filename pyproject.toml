@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wrf-era5-case"
-version = "0.2.0"
+version = "0.2.1"
 description = "Prepare transparent WRF cases forced by ERA5 reanalysis"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,6 +12,7 @@ license = { file = "LICENSE" }
 authors = [{ name = "Adithya Vemuri" }]
 dependencies = [
   "cdsapi>=0.7.7",
+  "eccodes>=2.38",
   "tomli>=2.0; python_version < '3.11'",
 ]
 

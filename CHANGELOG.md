@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.1 - 2026-11-06 (unreleased)
+
+- Verify actual ERA5 GRIB area, 0.25-degree resolution, UTC hours, variables
+  and pressure levels with ecCodes before reusing cached records.
+- Fingerprint requests in bundle filenames, preserve compatible legacy cache
+  files and request only missing records. Never substitute another location.
+- Verify downloaded and assembled bundles before atomic publication and retain
+  request/source provenance. Reject unsupported grids instead of regridding.
+- Make read-only plan/check output report verified coverage; add real-GRIB
+  regression fixtures and document the new ecCodes dependency/cache behaviour.
+
 ## 0.2.0 - 2026-09-22
 
 - Add human-readable TOML case configuration.
