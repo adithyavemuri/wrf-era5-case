@@ -1,6 +1,6 @@
 # WRF ERA5 Case
 
-Current version: **v0.2.1** (unreleased).
+Current version: **v0.2.2**.
 
 `wrf-era5-case` prepares transparent, reproducible single-domain or stationary
 one-way nested WRF cases
@@ -193,6 +193,11 @@ cases/netherlands_demo/
 
 ERA5 and geodata live in shared directories configured in `case.toml`, rather
 than being copied into each case.
+
+The generated WPS namelist sets `ordered_by_date = .false.` for ungrib. Keep
+this setting: assembled cache records and separate pressure/surface GRIB files
+can revisit earlier hours. Assuming chronological message order can silently
+omit required fields. See the generated `WPS_STEPS.md` before running WPS.
 
 ## Important scientific boundary
 

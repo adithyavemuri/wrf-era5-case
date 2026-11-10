@@ -26,6 +26,7 @@ def test_generates_readable_synchronized_namelists(tmp_path):
     assert "2025-01-10_00:00:00" in wps
     assert "2025-01-10_06:00:00" in wps
     assert "prefix = 'ERA5'" in wps
+    assert "ordered_by_date = .false." in wps
     assert "fg_name = 'ERA5'" in wps
     assert not (config.case_directory / "namelist.wps.pressure").exists()
     assert not (config.case_directory / "namelist.wps.surface").exists()

@@ -1,6 +1,15 @@
 # Changelog
 
-## 0.2.1 - 2026-11-06 (unreleased)
+## 0.2.2 - 2026-11-10
+
+- Generate `ordered_by_date = .false.` for ungrib: content-assembled caches
+  and separate pressure/surface inputs can revisit earlier timestamps. Preserve
+  all fields rather than relying on chronological GRIB message order.
+- Include a regression assertion and generated WPS instructions. The corrected
+  route completed a two-domain offshore integration run; this is preprocessing
+  and workflow evidence, not scientific validation of the modeled atmosphere.
+
+## 0.2.1 - 2026-11-06
 
 - Verify actual ERA5 GRIB area, 0.25-degree resolution, UTC hours, variables
   and pressure levels with ecCodes before reusing cached records.

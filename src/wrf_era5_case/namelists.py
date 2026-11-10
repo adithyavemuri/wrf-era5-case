@@ -154,7 +154,7 @@ This package prepares the case but does not run WPS in version 0.2.
 1. Use `namelist.wps` to run `geogrid.exe`.
 2. Link WPS `Vtable.ECMWF` as `Vtable`.
 3. Link both the ERA5 pressure-level and single-level GRIB files into the same WPS working directory.
-4. Run `ungrib.exe` once to create the combined `ERA5:*` intermediate files.
+4. Run `ungrib.exe` once to create the combined `ERA5:*` intermediate files. Keep `ordered_by_date = .false.`: cached records and separate pressure/surface files can revisit earlier times.
 5. Run `metgrid.exe`; `namelist.wps` declares `fg_name = 'ERA5'`.
 6. Confirm one `met_em.d01.*.nc` file exists for every requested hour before running `real.exe`.
 
